@@ -2,11 +2,10 @@
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { AlignJustify, Plus } from "lucide-react";
+import { AlignJustify} from "lucide-react";
 import Conversations from "./Conversations";
 import NewChatButton from "./newChat-button";
 import SettingForm from "./settings-form";
