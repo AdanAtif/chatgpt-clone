@@ -14,7 +14,7 @@ export const Chat = () => {
     console.log("submitting");
 
     e.preventDefault();
-    if (!prompt.trim()) return; // Prevent empty submissions
+    if (!prompt.trim()) return; 
 
     setLoading(true);
     try {
@@ -26,9 +26,8 @@ export const Chat = () => {
       const result = await model.generateContent(prompt);
       const aiResponse = result.response.text();
 
-      // Update chat history
       setChatHistory((prev) => [...prev, { user: prompt, ai: aiResponse }]);
-      setPrompt(""); // Clear the input field
+      setPrompt("");
     } catch (error) {
       console.error("Error generating AI response:", error);
     } finally {
