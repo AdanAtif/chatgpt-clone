@@ -1,13 +1,16 @@
 "use client";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchConversations, deleteConversation } from '@/store/ConversationSlice';
-import { MessageSquare, Trash2 } from 'lucide-react';
+import {MessageSquare, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Loader from '../Loader';
 import { AppDispatch, RootState } from '@/store/store';
+import DeleteConversationModal from '../model/deleteConversation-model';
 
 const Conversations = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [id, setId] = useState("");
   const { conversations, loading } = useSelector((state:RootState) => state.conversations);
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
@@ -21,7 +24,9 @@ const Conversations = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center space-y-2 px-2">
+    <>
+    <DeleteConversationModal isOpen={isOpen} onClose={() => setIsOpen(false)} loading={loading} onConfrim={()=> deleteHandler(id)} />
+     <div className="flex flex-col justify-center items-center space-y-2 px-2">
       {loading ? (
         <div className="my-4">
           <Loader />
@@ -43,7 +48,8 @@ const Conversations = () => {
                 size={10}
                 onClick={(e) => {
                   e.stopPropagation();
-                  deleteHandler(conversation.id);
+                  setIsOpen(true);
+                  setId(conversation.id);
                 }}
               />
             </div>
@@ -51,6 +57,8 @@ const Conversations = () => {
         ))
       )}
     </div>
+    </>
+   
   );
 };
 

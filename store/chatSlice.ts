@@ -61,12 +61,12 @@ export const sendMessage = createAsyncThunk<ChatEntry, SendMessagePayload, { rej
   'chat/sendMessage',
   async ({ prompt, chatHistory, uid }, { rejectWithValue }) => {
     try {
-      if (!process.env.NEXT_PUBLIC_API_AI) {
-        throw new Error('API Key for Google Generative AI is missing.');
-      }
-      console.log('API Key:', process.env.NEXT_PUBLIC_API_AI);
+      // if (!process.env.NEXT_PUBLIC_API_AI) {
+      //   throw new Error('API Key for Google Generative AI is missing.');
+      // }
+      // console.log('API Key:', process.env.NEXT_PUBLIC_API_AI);
 
-      const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_API_AI!);
+      const genAI = new GoogleGenerativeAI("AIzaSyCETKeMmFnEMhVQdBL-sjhCFQDfRGxnfYI");
       const model = await genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
       const chat = model.startChat({
         history: chatHistory.map((chat) => ({
