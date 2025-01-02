@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, doc, query, where,writeBatch } from 'firebase/firestore';
 import { db } from '@/database/db';
 
 // Define types for Conversation and initial state
@@ -58,6 +58,16 @@ export const deleteConversation = createAsyncThunk<string, string, { rejectValue
   async (id, { rejectWithValue }) => {
     try {
       await deleteDoc(doc(db, 'conversations', id));
+      const q = query(collection(db, 'chats'), where('uid', '==', id));
+      const querySnapshot = await getDocs(q);
+      const batch = writeBatch(db); 
+
+      querySnapshot.forEach((chatDoc) => {
+        batch.delete(doc(db, 'chats', chatDoc.id));
+      });
+
+      await batch.commit();
+
       return id;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -65,7 +75,6 @@ export const deleteConversation = createAsyncThunk<string, string, { rejectValue
   }
 );
 
-// Slice
 const conversationSlice = createSlice({
   name: 'conversations',
   initialState,
