@@ -1,11 +1,10 @@
 "use client";
-import { useRouter } from 'next/router';
+import { useParams } from 'next/navigation';
 import Chat from "@/components/chats/Chat";
 import Loader from '@/components/Loader';
 
 const ChatPage = () => {
-  const router = useRouter();
-  const { Id } = router.query;
+  const { Id } = useParams();
 
   if (!Id) {
     return <div className='flex justify-center items-center h-100'><Loader/></div>;
