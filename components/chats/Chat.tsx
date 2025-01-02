@@ -1,63 +1,54 @@
-"use client";
-import { SendHorizonal, User } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+'use client';
+import { SendHorizonal, User } from 'lucide-react';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchChatHistory, sendMessage } from '@/store/chatSlice';
+import { AppDispatch, RootState } from "@/store/store";
+import Loader from '../Loader';
 
-type ChatEntry = { user: string; ai: string };
-export const Chat = () => {
-  const [prompt, setPrompt] = useState("");
-  const [chatHistory, setChatHistory] = useState<ChatEntry[]>([]);
-  const [loading, setLoading] = useState(false);
+interface ChatProps {
+  id: string;
+}
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log("submitting");
+const Chat: React.FC<ChatProps> = ({ id }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  
+  const { chatHistory, loading } = useSelector((state: RootState) => state.chat);
 
+  const [prompt, setPrompt] = useState('');
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!prompt.trim()) return; 
-
-    setLoading(true);
-    try {
-      const genAI = new GoogleGenerativeAI(
-        "AIzaSyCETKeMmFnEMhVQdBL-sjhCFQDfRGxnfYI"
-      );
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-      const result = await model.generateContent(prompt);
-      const aiResponse = result.response.text();
-
-      setChatHistory((prev) => [...prev, { user: prompt, ai: aiResponse }]);
-      setPrompt("");
-    } catch (error) {
-      console.error("Error generating AI response:", error);
-    } finally {
-      setLoading(false);
-    }
+    if (!prompt.trim()) return;
+    dispatch(sendMessage({ prompt, chatHistory, uid: id }));
+    setPrompt('');
   };
+
+  useEffect(() => {
+    dispatch(fetchChatHistory(id));
+  }, [dispatch, id]);
+
   return (
     <div className="text-xl flex flex-col justify-between w-full h-[90vh] lg:h-screen py-4 bg-[#202123]">
       <div className="flex flex-col justify-start items-center space-y-3 w-full">
-        <div
-          className="w-full overflow-y-auto h-[75vh] lg:h-[80vh] px-2 lg:px-6 scrollbar-thin  "
-        >
+        <div className="w-full overflow-y-auto h-[75vh] lg:h-[80vh] px-2 lg:px-6 scrollbar-thin">
           {chatHistory.length === 0 ? (
             <div className="text-center text-[#FFFFFF] h-full w-full flex items-center justify-center">
               Start chatting with ChatGPT!
             </div>
           ) : (
-            chatHistory.map((chat, index) => (
+            chatHistory.map((chat) => (
               <div
                 className="text-[#FFFFFF] p-4 rounded-lg space-y-3 lg:space-y-6"
-                key={index}
+                key={chat.id}
               >
-                {/* User Message */}
                 <div className="flex p-3 justify-start items-center space-x-3 lg:space-x-8 w-full mx-auto">
-                  <div className="flex justify-center items-center p-2 bg-purple-600 rounded-xl">
+                  <div className="flex justify-center items-center p-2 bg-purple-600 rounded-xl flex-col">
                     <User className="text-[#ECECF1]" size={25} />
                   </div>
                   <p className="text-sm lg:text-lg">{chat.user}</p>
                 </div>
-                {/* AI Response */}
                 <div className="flex bg-[#40414E] rounded-xl p-3 justify-start space-x-3 lg:space-x-8 w-full mx-auto items-start">
                   <div className="flex justify-center items-center p-2 bg-green-400 rounded-xl">
                     <Image
@@ -88,10 +79,16 @@ export const Chat = () => {
         />
         <button
           type="submit"
-          disabled={loading}
-          className="flex justify-center items-center ml-2 lg:ml-4"
+          disabled={loading} 
+          className={`flex justify-center items-center ml-2 lg:ml-4 ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
-          <SendHorizonal className="text-[#ECECF1]" size={25} />
+          {loading ? (
+            <Loader/>
+          ) : (
+            <SendHorizonal className="text-[#ECECF1]" size={25} />
+          )}
         </button>
       </form>
     </div>
