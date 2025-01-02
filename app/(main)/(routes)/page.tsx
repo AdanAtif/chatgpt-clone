@@ -1,13 +1,8 @@
-import Chat from "@/components/chats/Chat";
-import Sidebar from "@/components/sidebar/Sidebar";
-
 const HomePage = () => {
   return (
-    <div className="bg-[#343541] text-[#FFFFFF] lg:flex lg:justify-start h-screen ">
-    <Sidebar />
-    <Chat />
-  </div>
+    <div className="justify-center flex items-center text-3xl font-semibold mx-auto text-center h-full">
+      Start Chatting with gpt
+    </div>
   );
 };
-
 export default HomePage;
