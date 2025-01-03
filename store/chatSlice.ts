@@ -8,7 +8,7 @@ interface ChatEntry {
   user: string;
   ai: string;
   uid: string;
-  date: number; // Store date as milliseconds
+  date: number; 
   id: string;
 }
 

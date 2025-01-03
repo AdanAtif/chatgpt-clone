@@ -19,8 +19,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log("NEXT_PUBLIC_API_AI",process.env.NEXT_PUBLIC_API_AI);
-  
   return (
     <Provider store={store}>
       <html lang="en" suppressHydrationWarning>
