@@ -14,6 +14,7 @@ import {
 } from '../ui/dialog';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { AppDispatch } from '@/store/store';
+import { useRouter } from 'next/navigation';
 
 interface AddConversationModalProps {
   isOpen: boolean;
@@ -31,17 +32,26 @@ const AddConversationModal: React.FC<AddConversationModalProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const onSubmitHandler: SubmitHandler<FormValues> = async (data) => {
     setLoading(true);
     try {
-      await dispatch(addConversation(data.name));
-      reset();
-      onClose();
+      const resultAction = await dispatch(addConversation(data.name));
+      if (addConversation.fulfilled.match(resultAction)) {
+        const newConversation = resultAction.payload; // This contains { id, name }
+        reset();
+        router.push(`/${newConversation.id}`);
+        onClose();
+      } else {
+        // Handle error if needed
+        console.error('Failed to add conversation:', resultAction.payload);
+      }
     } finally {
       setLoading(false);
     }
   };
+  
 
   if (!isOpen) return null;
 

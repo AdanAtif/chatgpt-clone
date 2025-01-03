@@ -1,11 +1,11 @@
-'use client';
-import { SendHorizonal, User } from 'lucide-react';
-import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchChatHistory, sendMessage } from '@/store/chatSlice';
+"use client";
+import { SendHorizonal, User } from "lucide-react";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchChatHistory, sendMessage } from "@/store/chatSlice";
 import { AppDispatch, RootState } from "@/store/store";
-import Loader from '../Loader';
+import Loader from "../Loader";
 
 interface ChatProps {
   id: string;
@@ -13,16 +13,18 @@ interface ChatProps {
 
 const Chat: React.FC<ChatProps> = ({ id }) => {
   const dispatch = useDispatch<AppDispatch>();
-  
-  const { chatHistory, loading } = useSelector((state: RootState) => state.chat);
 
-  const [prompt, setPrompt] = useState('');
+  const { chatHistory, loading } = useSelector(
+    (state: RootState) => state.chat
+  );
+
+  const [prompt, setPrompt] = useState("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!prompt.trim()) return;
     dispatch(sendMessage({ prompt, chatHistory, uid: id }));
-    setPrompt('');
+    setPrompt("");
   };
 
   useEffect(() => {
@@ -49,7 +51,7 @@ const Chat: React.FC<ChatProps> = ({ id }) => {
                   </div>
                   <p className="text-sm lg:text-lg">{chat.user}</p>
                 </div>
-                <div className="flex bg-[#40414E] rounded-xl p-3 justify-start space-x-3 lg:space-x-8 w-full mx-auto items-start">
+                {/* <div className="flex bg-[#40414E] rounded-xl p-3 justify-start space-x-3 lg:space-x-8 w-full mx-auto items-start">
                   <div className="flex justify-center items-center p-2 bg-green-400 rounded-xl">
                     <Image
                       src="/chatgpt-logo.svg"
@@ -59,6 +61,29 @@ const Chat: React.FC<ChatProps> = ({ id }) => {
                     />
                   </div>
                   <p className="text-sm lg:text-lg">{chat.ai}</p>
+                </div> */}
+                <div className="flex bg-[#40414E] rounded-xl p-3 justify-start space-x-3 lg:space-x-8 w-full mx-auto items-start">
+                  <div className="flex justify-center items-center p-2 bg-green-400 rounded-xl">
+                    <Image
+                      src="/chatgpt-logo.svg"
+                      alt="ChatGPT Logo"
+                      width={25}
+                      height={25}
+                    />
+                  </div>
+                  <div className="text-sm lg:text-lg text-[#FFFFFF] space-y-2">
+                   {chat.ai.split(/(\*\*.*?\*\*)/g).map((segment, index) => {
+      if (segment.startsWith('**') && segment.endsWith('**')) {
+        // Bold segment
+        return (
+          <p key={index} className="font-bold text-lg">
+            {segment.replace(/\*\*/g, '')}  {/* Remove asterisks for display */}
+          </p>
+        );
+      }
+      return <p key={index}>{segment.trim()}</p>;
+    })}
+                  </div>
                 </div>
               </div>
             ))
@@ -79,13 +104,13 @@ const Chat: React.FC<ChatProps> = ({ id }) => {
         />
         <button
           type="submit"
-          disabled={loading} 
+          disabled={loading}
           className={`flex justify-center items-center ml-2 lg:ml-4 ${
-            loading ? 'opacity-50 cursor-not-allowed' : ''
+            loading ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
           {loading ? (
-            <Loader/>
+            <Loader />
           ) : (
             <SendHorizonal className="text-[#ECECF1]" size={25} />
           )}

@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '../ui/dialog';
 import Loader from '../Loader';
+import { useRouter } from 'next/navigation';
 
 interface DeleteConversationModalProps {
   isOpen: boolean;
@@ -23,11 +24,13 @@ const DeleteConversationModal: React.FC<DeleteConversationModalProps> = ({
   onConfrim,
   onClose
 }) => {
+  const router = useRouter();
   if (!isOpen) return null;
 
   const handleConfirm = () => {
     onConfrim(); 
-    onClose();   
+    router.push('/'); 
+    onClose();  
   };
 
   return (
